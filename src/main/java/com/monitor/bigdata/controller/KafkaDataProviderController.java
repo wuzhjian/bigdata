@@ -1,5 +1,6 @@
 package com.monitor.bigdata.controller;
 
+
 import com.monitor.bigdata.model.Result;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -7,6 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.annotation.Resource;
 import javax.management.*;
 import javax.management.remote.JMXConnector;
 import javax.management.remote.JMXConnectorFactory;
@@ -30,6 +32,7 @@ public class KafkaDataProviderController {
     private static final String FLOWER_REQUEST_PER_SEC = "kafka.network:type=RequestMetrics,name=RequestsPerSec,request=FetchFollower";
     private static final String ACTIVE_CONTROLLER_COUNT = "kafka.controller:type=KafkaController,name=ActiveControllerCount";
     private static final String PART_COUNT = "kafka.server:type=ReplicaManager,name=PartitionCount";
+
 
 
 
@@ -70,7 +73,11 @@ public class KafkaDataProviderController {
         System.out.println("flowerRequestCountPerSec:  " + flowerRequestCountPerSec);
         System.out.println("activeControllerCount:  " + activeControllerCount);
 
+
         return Result.ofMessage(500, "www");
+
+
     }
+
 
 }
