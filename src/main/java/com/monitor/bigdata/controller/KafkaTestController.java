@@ -1,7 +1,6 @@
 package com.monitor.bigdata.controller;
 
 
-import kafka.utils.ZkUtils;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
@@ -31,18 +30,20 @@ public class KafkaTestController {
     @Resource
     private KafkaConsumer kafkaConsumer;
 
+    public String topic = "test";
+    // public String topic = "spark-kafka-demo-2";
     @RequestMapping(value = "/asynSend")
     public void asynSend(){
         long start = System.currentTimeMillis();
 
-        for (int i = 0; i < 20; i++) {
-            ProducerRecord<String, String> record = new ProducerRecord<String, String>("spark-kafka-demo-2", String.valueOf(i));
+        for (int i = 0; i < 200000000; i++) {
+            ProducerRecord<String, String> record = new ProducerRecord<String, String>(topic, String.valueOf(i));
             producer.send(record, new Callback() {
                 @Override
                 public void onCompletion(RecordMetadata metadata, Exception exception) {
                     if (exception == null){
                         // 发送成功
-                        System.out.println(metadata.topic().toString() +"   " + metadata.partition() + "    " + metadata.offset() + "    " + metadata.timestamp());
+                        // System.out.println(metadata.topic().toString() +"   " + metadata.partition() + "    " + metadata.offset() + "    " + metadata.timestamp());
                     } else {
                         if (exception instanceof RetriableException){
                             // 可重试
@@ -60,7 +61,7 @@ public class KafkaTestController {
         public void synSend(){
         long start = System.currentTimeMillis();
         for (int i = 0; i < 100000; i++) {
-            ProducerRecord<String, String> record = new ProducerRecord<String, String>("spark-kafka-demo-2", String.valueOf(i));
+            ProducerRecord<String, String> record = new ProducerRecord<String, String>(topic, String.valueOf(i));
             try {
                 Future<RecordMetadata> recordMetadataFuture = producer.send(record);
 
@@ -75,7 +76,7 @@ public class KafkaTestController {
 
     @RequestMapping(value = "/consumer")
     public void consumerTest(){
-        kafkaConsumer.subscribe(Arrays.asList("spark-kafka-demo-2"));
+        kafkaConsumer.subscribe(Arrays.asList(topic));
         while (true){
             ConsumerRecords<String, String> records = kafkaConsumer.poll(1000);
             for (ConsumerRecord<String, String> record : records){
